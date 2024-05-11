@@ -12,13 +12,19 @@ def toggle_fullscreen():
 
 while True:
     for event in pygame.event.get():
+        # quit the game
         if event.type == pygame.QUIT:
             pygame.quit()
-            exit()
-            
-        # toggle fullscreen when F11 is pressed
-        elif event.type == pygame.KEYDOWN:
+            exit()           
+        # keydow
+        if event.type == pygame.KEYDOWN:
+            # quit the game on ESC
+            if event.key == pygame.K_ESCAPE:
+                pygame.quit()
+                exit()
+            # toggle fullscreen on F11
             if event.key == pygame.K_F11:
                 pygame.display.toggle_fullscreen()
+
      
     pygame.display.update()   
