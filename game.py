@@ -4,6 +4,7 @@ from sys import exit
 # initialization
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
+clock = pygame.time.Clock()
 
 # function to toggle fullscreen mode
 def toggle_fullscreen():
@@ -27,4 +28,5 @@ while True:
                 pygame.display.toggle_fullscreen()
 
      
-    pygame.display.update()   
+    pygame.display.update()
+    clock.tick(60)   
