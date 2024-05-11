@@ -3,6 +3,9 @@ from sys import exit
 
 # initialization
 pygame.init()
+pygame.display.set_caption("Mario")
+
+# variables
 screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
 
