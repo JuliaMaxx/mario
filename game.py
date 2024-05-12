@@ -14,14 +14,19 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP] and self.rect.bottom >= 610:
             self.player_gravity = -25 
+        
+        if keys[pygame.K_LEFT] and self.rect.left >= 0 :
+            self.rect.x -= 5
+            
+        if keys[pygame.K_RIGHT] and self.rect.right <= 1280:
+            self.rect.x += 5
     
     def animation(self):
         if self.rect.bottom < 610:
             self.image = self.mario_jump
         else:
             self.image = self.mario
-         
-    
+          
     def apply_gravity(self):
         self.player_gravity += 1
         self.rect.y += self.player_gravity
