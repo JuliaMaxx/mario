@@ -4,8 +4,9 @@ from sys import exit
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        mario = pygame.transform.scale2x(pygame.image.load('graphics/mario.png').convert_alpha())
-        self.image = pygame.transform.scale2x(mario)
+        self.mario = pygame.transform.scale2x(pygame.image.load('graphics/mario.png').convert_alpha())
+        self.mario_jump = pygame.transform.scale2x(pygame.image.load('graphics/mario_jump.png').convert_alpha())
+        self.image = self.mario
         self.rect = self.image.get_rect(midbottom = (30, 610))
         self.player_gravity = 0
     
@@ -14,6 +15,13 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_UP] and self.rect.bottom >= 610:
             self.player_gravity = -25 
     
+    def animation(self):
+        if self.rect.bottom < 610:
+            self.image = self.mario_jump
+        else:
+            self.image = self.mario
+         
+    
     def apply_gravity(self):
         self.player_gravity += 1
         self.rect.y += self.player_gravity
@@ -21,6 +29,7 @@ class Player(pygame.sprite.Sprite):
     
     def update(self):
         self.player_input()
+        self.animation()
         self.apply_gravity()
 
 # initialization
