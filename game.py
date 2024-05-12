@@ -12,14 +12,14 @@ font = pygame.font.Font('fonts/emulogic.ttf', 30)
 game_active = False
 
 # inactive game surface
-super_mario_bros_surf = pygame.image.load('graphics/super_mario_bros.png').convert()
+super_mario_bros_surf = pygame.image.load('graphics/super_mario_bros.png').convert_alpha()
 super_mario_bros_rect = super_mario_bros_surf.get_rect(center = ( (640, 300)))
 game_instruction_surf = font.render("Press ENTER to run", False, '#fcbcb0')
 game_instruction_rect = game_instruction_surf.get_rect(center = (640, 440))
 
 # background
-sky_surf = pygame.image.load('graphics/sky.png').convert()
-ground_surf = pygame.image.load('graphics/ground.png').convert()
+sky_surf = pygame.image.load('graphics/sky.png').convert_alpha()
+ground_surf = pygame.image.load('graphics/ground.png').convert_alpha()
 
 # function to toggle fullscreen mode
 def toggle_fullscreen():
