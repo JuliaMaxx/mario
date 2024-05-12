@@ -51,10 +51,7 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.mario_jump
             elif self.moving and self.direction == 'left':
                 self.image = self.mario_jump_flip
-
-        
-                
-            
+         
     def walk_animation(self, direction):
         self.player_index += 0.2
         if self.player_index >= len(self.mario_walk): self.player_index = 0
@@ -63,8 +60,7 @@ class Player(pygame.sprite.Sprite):
             self.image = self.mario_walk_flip[int(self.player_index)]
         else:
             self.image = self.mario_walk[int(self.player_index)]
-        
-                     
+                            
     def apply_gravity(self):
         self.player_gravity += 1
         self.rect.y += self.player_gravity
@@ -75,7 +71,10 @@ class Player(pygame.sprite.Sprite):
         self.jump_animation()
         self.apply_gravity()
         if not self.moving and self.rect.bottom >= 610:
-            self.image = self.mario_walk[0]
+            if self.direction == "left":
+                self.image = self.mario_walk_flip[0]
+            elif self.direction == "right":
+                self.image = self.mario_walk[0]
 
 # initialization
 pygame.init()
