@@ -6,8 +6,12 @@ pygame.init()
 pygame.display.set_caption("Mario")
 
 # variables
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
+
+# background
+sky_surf = pygame.image.load('graphics/sky.png').convert()
+ground_surf = pygame.image.load('graphics/ground.png').convert()
 
 # function to toggle fullscreen mode
 def toggle_fullscreen():
@@ -29,7 +33,10 @@ while True:
             # toggle fullscreen on F11
             if event.key == pygame.K_F11:
                 pygame.display.toggle_fullscreen()
-
+                
+    # background 
+    screen.blit(sky_surf, (0, 0))
+    screen.blit(ground_surf, (0, 610))
      
     pygame.display.update()
     clock.tick(60)   
