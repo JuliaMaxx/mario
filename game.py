@@ -8,6 +8,7 @@ pygame.display.set_caption("Mario")
 # variables
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
+font = pygame.font.Font('fonts/emulogic.ttf', 50)
 
 # background
 sky_surf = pygame.image.load('graphics/sky.png').convert()
