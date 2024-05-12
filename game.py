@@ -9,6 +9,7 @@ pygame.display.set_caption("Mario")
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 font = pygame.font.Font('fonts/emulogic.ttf', 50)
+game_active = False
 
 # background
 sky_surf = pygame.image.load('graphics/sky.png').convert()
@@ -24,20 +25,29 @@ while True:
         # quit the game
         if event.type == pygame.QUIT:
             pygame.quit()
-            exit()           
+            exit()   
+                    
         # keydow
         if event.type == pygame.KEYDOWN:
             # quit the game on ESC
             if event.key == pygame.K_ESCAPE:
                 pygame.quit()
                 exit()
+                
             # toggle fullscreen on F11
             if event.key == pygame.K_F11:
                 pygame.display.toggle_fullscreen()
                 
-    # background 
-    screen.blit(sky_surf, (0, 0))
-    screen.blit(ground_surf, (0, 610))
-     
+            # start the game
+            if event.key == pygame.K_RETURN:
+                game_active = True
+                
+    if game_active:                
+        # background 
+        screen.blit(sky_surf, (0, 0))
+        screen.blit(ground_surf, (0, 610))
+    else:
+        screen.fill('black')
+        
     pygame.display.update()
     clock.tick(60)   
