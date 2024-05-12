@@ -8,8 +8,14 @@ pygame.display.set_caption("Mario")
 # variables
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
-font = pygame.font.Font('fonts/emulogic.ttf', 50)
+font = pygame.font.Font('fonts/emulogic.ttf', 30)
 game_active = False
+
+# inactive game surface
+super_mario_bros_surf = pygame.image.load('graphics/super_mario_bros.png').convert()
+super_mario_bros_rect = super_mario_bros_surf.get_rect(center = ( (640, 300)))
+game_instruction_surf = font.render("Press ENTER to run", False, '#fcbcb0')
+game_instruction_rect = game_instruction_surf.get_rect(center = (640, 440))
 
 # background
 sky_surf = pygame.image.load('graphics/sky.png').convert()
@@ -47,7 +53,9 @@ while True:
         screen.blit(sky_surf, (0, 0))
         screen.blit(ground_surf, (0, 610))
     else:
-        screen.fill('black')
+        screen.fill('#c84c0c')
+        screen.blit(super_mario_bros_surf, super_mario_bros_rect)
+        screen.blit(game_instruction_surf, game_instruction_rect)
         
     pygame.display.update()
     clock.tick(60)   
