@@ -1,5 +1,6 @@
 import pygame
 from sys import exit
+from random import randint
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -75,7 +76,33 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.mario_walk_flip[0]
             elif self.direction == "right":
                 self.image = self.mario_walk[0]
-
+           
+class Goombas(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        goombas_0 = pygame.image.load('graphics/goombas_0.png').convert_alpha()
+        goombas_1 = pygame.image.load('graphics/goombas_1.png').convert_alpha()
+        self.frames = [goombas_0, goombas_1]
+        self.obstactle_index = 0
+        self.goombas_dead = pygame.image.load('graphics/goombas_dead.png').convert_alpha()
+        self.image = self.frames[self.obstactle_index]
+        self.rect = self.image.get_rect(midbottom = (randint(1300, 1600), 610))
+        
+    def animation(self):
+        self.obstactle_index += 0.1
+        if self.obstactle_index > len(self.frames): self.obstactle_index = 0
+        self.image = self.frames[int(self.obstactle_index)]
+        
+    def destroy(self):
+        if self.rect.x <= -100: 
+            self.kill()
+        
+    def update(self):
+        self.animation()
+        self.rect.x -= 2
+        self.destroy()
+          
+    
 # initialization
 pygame.init()
 pygame.display.set_caption("Mario")
@@ -105,12 +132,22 @@ def toggle_fullscreen():
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
+# obstacle
+obstacle_group = pygame.sprite.Group()
+
+# timer
+obstacle_timer = pygame.USEREVENT + 1
+pygame.time.set_timer(obstacle_timer, 4000)
+
 while True:
     for event in pygame.event.get():
         # quit the game
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()   
+        if game_active:
+            if event.type == obstacle_timer:
+                obstacle_group.add(Goombas())
                     
         # keydow
         if event.type == pygame.KEYDOWN:
@@ -133,6 +170,9 @@ while True:
         screen.blit(ground_surf, (0, 610))
         player.draw(screen)
         player.update()
+        # obstacles
+        obstacle_group.draw(screen)
+        obstacle_group.update()
     else:
         screen.fill('#c84c0c')
         screen.blit(super_mario_bros_surf, super_mario_bros_rect)
