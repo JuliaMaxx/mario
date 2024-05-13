@@ -3,13 +3,14 @@ from sys import exit
 from random import randint
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, obstacle_group):
         super().__init__()
         self.player_gravity = 0
         self.player_index = 0
         self.moving = False
         self.direction = 'right'
-        
+        self.jump = False
+
         # right side
         self.mario = pygame.transform.scale2x(pygame.image.load('graphics/mario.png').convert_alpha())
         self.mario_jump = pygame.transform.scale2x(pygame.image.load('graphics/mario_jump.png').convert_alpha())
@@ -48,10 +49,12 @@ class Player(pygame.sprite.Sprite):
         
     def jump_animation(self):
         if self.rect.bottom < 610:
+            self.jump = True
             if self.moving and self.direction == 'right':
                 self.image = self.mario_jump
             elif self.moving and self.direction == 'left':
                 self.image = self.mario_jump_flip
+        else: self.jump = False
          
     def walk_animation(self, direction):
         self.player_index += 0.2
@@ -66,25 +69,40 @@ class Player(pygame.sprite.Sprite):
         self.player_gravity += 1
         self.rect.y += self.player_gravity
         if self.rect.bottom > 610: self.rect.bottom = 610
+        
+    def collision(self):
+        collision_sprites = pygame.sprite.spritecollide(player.sprite, obstacle_group, False)
+        if collision_sprites:
+            for sprite in collision_sprites:
+                if self.jump == True and self.rect.bottom > sprite.rect.top:
+                    sprite.fade_out = True
+                    self.player_gravity = -20
     
     def update(self):
         self.player_input()
         self.jump_animation()
         self.apply_gravity()
+        self.collision()
         if not self.moving and self.rect.bottom >= 610:
             if self.direction == "left":
                 self.image = self.mario_walk_flip[0]
             elif self.direction == "right":
                 self.image = self.mario_walk[0]
            
+           
 class Goombas(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
+        self.obstactle_index = 0
+        self.alpha = 255  
+        self.fade_speed = 10
+        self.fade_out = False
+        
         goombas_0 = pygame.image.load('graphics/goombas_0.png').convert_alpha()
         goombas_1 = pygame.image.load('graphics/goombas_1.png').convert_alpha()
+        self.dead = pygame.image.load('graphics/goombas_dead.png').convert_alpha()
         self.frames = [goombas_0, goombas_1]
-        self.obstactle_index = 0
-        self.goombas_dead = pygame.image.load('graphics/goombas_dead.png').convert_alpha()
+        
         self.image = self.frames[self.obstactle_index]
         self.rect = self.image.get_rect(midbottom = (randint(1300, 1600), 610))
         
@@ -94,14 +112,24 @@ class Goombas(pygame.sprite.Sprite):
         self.image = self.frames[int(self.obstactle_index)]
         
     def destroy(self):
-        if self.rect.x <= -100: 
+        if self.rect.x <= -100:
             self.kill()
-        
+            
+    def fade_out_animation(self):
+        if self.fade_out:
+            self.image = self.dead
+            self.alpha -= self.fade_speed
+            if self.alpha <= 0:
+                self.kill()
+                     
     def update(self):
         self.animation()
         self.rect.x -= 2
         self.destroy()
-          
+        self.fade_out_animation()
+        if self.alpha < 255:
+            self.image.set_alpha(self.alpha)
+            
     
 # initialization
 pygame.init()
@@ -128,12 +156,12 @@ def toggle_fullscreen():
     fullscreen = not screen.get_flags() & pygame.FULLSCREEN
     pygame.display.set_mode((800, 600), pygame.FULLSCREEN if fullscreen else 0)
     
-# player
-player = pygame.sprite.GroupSingle()
-player.add(Player())
-
 # obstacle
 obstacle_group = pygame.sprite.Group()
+
+# player
+player = pygame.sprite.GroupSingle()
+player.add(Player(obstacle_group))
 
 # timer
 obstacle_timer = pygame.USEREVENT + 1
@@ -148,6 +176,10 @@ while True:
         if game_active:
             if event.type == obstacle_timer:
                 obstacle_group.add(Goombas())
+        else:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN :
+                game_active = True
+                start_time = pygame.time.get_ticks()
                     
         # keydow
         if event.type == pygame.KEYDOWN:
@@ -168,11 +200,15 @@ while True:
         # background 
         screen.blit(sky_surf, (0, 0))
         screen.blit(ground_surf, (0, 610))
+        
+        # player
         player.draw(screen)
         player.update()
+        
         # obstacles
         obstacle_group.draw(screen)
         obstacle_group.update()
+    
     else:
         screen.fill('#c84c0c')
         screen.blit(super_mario_bros_surf, super_mario_bros_rect)
