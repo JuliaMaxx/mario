@@ -1,6 +1,6 @@
 import pygame
 from sys import exit
-from random import randint
+from random import randint, choice
 
 # initialization
 pygame.init()
@@ -124,10 +124,10 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.mario_walk_flip[0]
             elif self.direction == "right":
                 self.image = self.mario_walk[0]
-           
-           
-class Goombas(pygame.sprite.Sprite):
-    def __init__(self):
+
+
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self, name, x):
         super().__init__()
         
         # variables
@@ -139,31 +139,31 @@ class Goombas(pygame.sprite.Sprite):
         self.fade_out = False
         
         # images
-        goombas_0 = pygame.image.load('graphics/goombas_0.png').convert_alpha()
-        goombas_1 = pygame.image.load('graphics/goombas_1.png').convert_alpha()
-        self.dead = pygame.image.load('graphics/goombas_dead.png').convert_alpha()
-        self.frames = [goombas_0, goombas_1]
+        frame_0 = pygame.image.load(f'graphics/{name}_0.png').convert_alpha()
+        frame_1 = pygame.image.load(f'graphics/{name}_1.png').convert_alpha()
+        self.dead = pygame.image.load(f'graphics/{name}_dead.png').convert_alpha()
+        self.frames = [frame_0, frame_1]
         
         # image/rect
         self.image = self.frames[self.obstactle_index]
-        self.rect = self.image.get_rect(midbottom = (randint(1300, 1600), 610))
-        
+        self.rect = self.image.get_rect(midbottom = (x, 610))
+    
     def animation(self):
         self.obstactle_index += 0.1
         if self.obstactle_index > len(self.frames): self.obstactle_index = 0
-        self.image = self.frames[int(self.obstactle_index)]
-        
+        self.image = self.frames[int(self.obstactle_index)]  
+    
     def destroy(self):
         if self.rect.x <= -100:
-            self.kill()
-            
+            self.kill()      
+    
     def fade_out_animation(self):
         if self.fade_out:
             self.image = self.dead
             self.alpha -= self.fade_speed
             if self.alpha <= 0:
-                self.kill()
-                     
+                self.kill() 
+    
     def update(self):
         self.animation()
         self.rect.x -= 2
@@ -171,7 +171,15 @@ class Goombas(pygame.sprite.Sprite):
         self.fade_out_animation()
         if self.alpha < 255:
             self.image.set_alpha(self.alpha)
-            
+    
+           
+class Goombas(Obstacle):
+    def __init__(self):
+        super().__init__('goombas', randint(1250, 1400))
+        
+class Koopa(Obstacle):
+    def __init__(self):
+        super().__init__('koopa', randint(1400, 1650))
 
 # variables
 screen = pygame.display.set_mode((1280, 720))
@@ -192,9 +200,9 @@ ground_surf = pygame.image.load('graphics/ground.png').convert_alpha()
 # obstacle
 obstacle_group = pygame.sprite.Group()
 
-# timer
+# timers
 obstacle_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacle_timer, 4000)
+pygame.time.set_timer(obstacle_timer, 2000)
 
 # player
 player = pygame.sprite.GroupSingle()
@@ -223,15 +231,15 @@ while True:
         if game_active:
             # add obstacles
             if event.type == obstacle_timer:
-                obstacle_group.add(Goombas())
+                obstacle_group.add(choice([Goombas(), Koopa(), Goombas()]))
+
         else:
             # restart the game with ENTER
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN :
                 game_active = True
                 start_time = pygame.time.get_ticks()
                 game_reset()
-                
-                    
+                                    
         # keydow
         if event.type == pygame.KEYDOWN:
             # quit the game on ESC
