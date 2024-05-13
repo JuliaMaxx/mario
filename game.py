@@ -100,9 +100,11 @@ class Player(pygame.sprite.Sprite):
         collision_sprites = pygame.sprite.spritecollide(player.sprite, obstacle_group, False)
         if collision_sprites:
             for sprite in collision_sprites:
+                global score
                 if self.jump == True and self.rect.bottom > sprite.rect.top:
                     sprite.fade_out = True
                     self.player_gravity = -20
+                    score += 1
                 else:
                     self.fade_out = True
                     
@@ -171,21 +173,24 @@ class Obstacle(pygame.sprite.Sprite):
         self.fade_out_animation()
         if self.alpha < 255:
             self.image.set_alpha(self.alpha)
-    
+   
            
 class Goombas(Obstacle):
     def __init__(self):
         super().__init__('goombas', randint(1250, 1400))
         
+        
 class Koopa(Obstacle):
     def __init__(self):
         super().__init__('koopa', randint(1400, 1650))
+
 
 # variables
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 font = pygame.font.Font('fonts/emulogic.ttf', 30)
 game_active = False
+score = 0
 
 # inactive game surface
 super_mario_bros_surf = pygame.image.load('graphics/super_mario_bros.png').convert_alpha()
@@ -208,7 +213,6 @@ pygame.time.set_timer(obstacle_timer, 2000)
 player = pygame.sprite.GroupSingle()
 player.add(Player())
 
-
 # function to toggle fullscreen mode
 def toggle_fullscreen():
     fullscreen = not screen.get_flags() & pygame.FULLSCREEN
@@ -216,11 +220,13 @@ def toggle_fullscreen():
     
 # game reset function
 def game_reset():
+    global score
     obstacle_group.empty()
     player.sprite.rect.x = 30
     player.sprite.alpha = 255
     player.sprite.fade_out = False
     player.sprite.image = player.sprite.mario_walk[0]
+    score = 0
 
 while True:
     for event in pygame.event.get():
@@ -254,6 +260,7 @@ while True:
             # start the game
             if event.key == pygame.K_RETURN:
                 game_active = True
+    
                 
     if game_active:                
         # background 
@@ -272,6 +279,10 @@ while True:
         screen.fill('#c84c0c')
         screen.blit(super_mario_bros_surf, super_mario_bros_rect)
         screen.blit(game_instruction_surf, game_instruction_rect)
+    # text
+    score_surf = font.render(f"Score: {score}", False, '#fcbcb0')
+    score_rect = score_surf.get_rect(center = (640, 50))
+    screen.blit(score_surf, score_rect)
         
     pygame.display.update()
     clock.tick(60)   
