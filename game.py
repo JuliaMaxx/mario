@@ -211,6 +211,7 @@ class Koopa(Obstacle):
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 font = pygame.font.Font('fonts/emulogic.ttf', 30)
+font_1 = pygame.font.Font('fonts/emulogic.ttf', 70)
 game_active = False
 score = 0
 first_game = True
@@ -218,6 +219,8 @@ first_game = True
 # inactive game surface
 super_mario_bros_surf = pygame.image.load('graphics/super_mario_bros.png').convert_alpha()
 super_mario_bros_rect = super_mario_bros_surf.get_rect(center = ( (640, 300)))
+game_over_surf = font_1.render('GAME OVER', False, 'Black').convert_alpha()
+game_over_rect = game_over_surf.get_rect(center = ((640, 330)))
 game_instruction_surf = font.render("Press ENTER to run", False, '#fcbcb0')
 game_instruction_rect = game_instruction_surf.get_rect(center = (640, 440))
 
@@ -302,11 +305,15 @@ while True:
     
     else:
         screen.fill('#c84c0c')
-        screen.blit(super_mario_bros_surf, super_mario_bros_rect)
         screen.blit(game_instruction_surf, game_instruction_rect)
+        if first_game:
+            screen.blit(super_mario_bros_surf, super_mario_bros_rect)
+        else:
+            screen.blit(game_over_surf, game_over_rect)
+        
     if not first_game:
         # text
-        score_surf = font.render(f"Score: {score}", False, '#fcbcb0')
+        score_surf = font.render(f"Score: {score}", False, 'Black')
         score_rect = score_surf.get_rect(center = (640, 50))
         screen.blit(score_surf, score_rect)
         
