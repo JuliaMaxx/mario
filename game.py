@@ -115,7 +115,6 @@ class Player(pygame.sprite.Sprite):
         if collision_sprites:
             for sprite in collision_sprites:
                 global score
-                
                 # kill the enemy
                 if self.jump == True and self.rect.bottom > sprite.rect.top and not self.fade_out:
                     self.player_gravity = -20
@@ -151,9 +150,15 @@ class Player(pygame.sprite.Sprite):
 
 
 class Obstacle(pygame.sprite.Sprite):
+    # dummy code
+    obstacle_count = 0
+    
     def __init__(self, name, x, direction):
         super().__init__()  
-            
+          
+        # dummy code
+        Obstacle.obstacle_count += 1
+                    
         # variables
         self.direction = direction
         self.obstactle_index = 0
@@ -220,6 +225,13 @@ class Obstacle(pygame.sprite.Sprite):
         self.fade_out_animation()
         if self.alpha < 255:
             self.image.set_alpha(self.alpha)
+                    
+    # dummy code  
+    @classmethod
+    def description(self):
+        return f"This is obstacle class with {Obstacle.obstacle_count} obstacles defined."
+    def __str__(self):
+        return f"Obstacle with the name {self.name} which is moving to the {self.direction}"
    
            
 class Goombas(Obstacle):
@@ -319,9 +331,7 @@ while True:
             if event.key == pygame.K_RETURN:
                 game_active = True   
                 
-    if game_active:                      
-        first_game = False
-        
+    if game_active:                 
         # background 
         screen.blit(sky_surf, (0, 0))
         screen.blit(ground_surf, (0, 610))
@@ -334,6 +344,7 @@ while True:
         obstacle_group.draw(screen)
         obstacle_group.update()
     
+        first_game = False
     else:
         screen.fill('#c84c0c')
         screen.blit(game_instruction_surf, game_instruction_rect)
@@ -350,3 +361,4 @@ while True:
         
     pygame.display.update()
     clock.tick(60)   
+    
