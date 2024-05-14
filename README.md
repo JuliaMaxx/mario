@@ -11,3 +11,6 @@
 - you gain 1 point when killing goombas and 2 points when killing koopa
 - press ENTER to restart the game
 - game is desctop-only
+
+## UML class diagram
+![image](https://github.com/JuliaMaxx/mario/assets/121096183/7e5c8bc2-abc4-4454-84f8-49fff94d0578)
