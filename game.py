@@ -36,13 +36,13 @@ class Player(pygame.sprite.Sprite):
         self.death_sound.set_volume(0.5)
         
         # right side images
-        self.mario = pygame.transform.scale2x(pygame.image.load('graphics/mario.png').convert_alpha())
+        mario = pygame.transform.scale2x(pygame.image.load('graphics/mario.png').convert_alpha())
         self.mario_jump = pygame.transform.scale2x(pygame.image.load('graphics/mario_jump.png').convert_alpha())
-        self.mario_walk_0 = pygame.transform.scale2x(pygame.image.load('graphics/mario_move0.png').convert_alpha())
-        self.mario_walk_1 = pygame.transform.scale2x(pygame.image.load('graphics/mario_move1.png').convert_alpha())
-        self.mario_walk_2 = pygame.transform.scale2x(pygame.image.load('graphics/mario_move2.png').convert_alpha())
+        mario_walk_0 = pygame.transform.scale2x(pygame.image.load('graphics/mario_move0.png').convert_alpha())
+        mario_walk_1 = pygame.transform.scale2x(pygame.image.load('graphics/mario_move1.png').convert_alpha())
+        mario_walk_2 = pygame.transform.scale2x(pygame.image.load('graphics/mario_move2.png').convert_alpha())
         self.mario_death = pygame.transform.scale2x(pygame.image.load('graphics/mario_death.png').convert_alpha())
-        self.mario_walk = [self.mario, self.mario_walk_0, self.mario_walk_1, self.mario_walk_2]
+        self.mario_walk = [mario, mario_walk_0, mario_walk_1, mario_walk_2]
         
         # left side images
         self.mario_walk_flip = []
@@ -165,10 +165,10 @@ class Obstacle(pygame.sprite.Sprite):
         self.fade_out = False
         
         # images
-        self.frame_0 = pygame.image.load(f'graphics/{name}_0.png').convert_alpha()
-        self.frame_1 = pygame.image.load(f'graphics/{name}_1.png').convert_alpha()
+        frame_0 = pygame.image.load(f'graphics/{name}_0.png').convert_alpha()
+        frame_1 = pygame.image.load(f'graphics/{name}_1.png').convert_alpha()
         self.dead = pygame.image.load(f'graphics/{name}_dead.png').convert_alpha()
-        self.frames = [self.frame_0, self.frame_1]
+        self.frames = [frame_0, frame_1]
         
         # flipped
         self.frames_flip = []

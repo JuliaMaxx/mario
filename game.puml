@@ -1,0 +1,56 @@
+@startuml
+class Player {
+  + player_gravity
+  + player_index
+  + moving
+  + direction
+  + jump
+  + alpha
+  + fade_speed
+  + fade_out
+  + jump_sound
+  + score_sound
+  + death_sound
+  + mario_walk
+  + mario_jump
+  + mario_death
+  + mario_walk_flip
+  + mario_jump_flip
+  + image
+  + rect
+  + player_input()
+  + jump_animation()
+  + apply_gravity()
+  + fade_out_animation()
+  + collision()
+  + update()
+}
+
+class Obstacle {
+  + direction
+  + obstacle_index
+  + name
+  + alpha
+  + fade_speed
+  + fade_out
+  + dead 
+  + frames
+  + frames_flip
+  + animation()
+  + destroy()
+  + fade_out_animation()
+  + update()
+}
+
+class Goombas {
+  - color
+  # age
+}
+
+class Koopa {
+  + description()
+}
+
+Goombas -> Obstacle : is
+Koopa -> Obstacle : is
+@enduml
