@@ -134,6 +134,7 @@ class Obstacle(pygame.sprite.Sprite):
         # variables
         self.direction = direction
         self.obstactle_index = 0
+        self.name = name
         
         # fade out variables
         self.alpha = 255  
@@ -146,8 +147,17 @@ class Obstacle(pygame.sprite.Sprite):
         self.dead = pygame.image.load(f'graphics/{name}_dead.png').convert_alpha()
         self.frames = [self.frame_0, self.frame_1]
         
+        # flipped
+        self.frames_flip = []
+        for i in range(len(self.frames)):
+            self.frames_flip.append(pygame.transform.flip(self.frames[i], True, False))
+        
         # image/rect
-        self.image = self.frames[self.obstactle_index]
+        if self.name == 'koopa' and self.direction == 'right':
+            self.image = self.frames_flip[int(self.obstactle_index)]
+        else:
+            self.image = self.frames[self.obstactle_index]
+            
         if self.direction == 'left':
             self.rect = self.image.get_rect(midbottom = (x, 610))
         else:
@@ -156,7 +166,9 @@ class Obstacle(pygame.sprite.Sprite):
     def animation(self):
         self.obstactle_index += 0.1
         if self.obstactle_index > len(self.frames): self.obstactle_index = 0
-        self.image = self.frames[int(self.obstactle_index)]  
+        if self.name == 'koopa' and self.direction == 'right':
+            self.image = self.frames_flip[int(self.obstactle_index)]  
+        else: self.image = self.frames[int(self.obstactle_index)]  
     
     def destroy(self):
         if self.direction == 'left':
