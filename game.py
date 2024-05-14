@@ -7,7 +7,6 @@ pygame.init()
 pygame.display.set_caption("Mario")
 
 
-
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -24,18 +23,19 @@ class Player(pygame.sprite.Sprite):
         self.fade_speed = 3
         self.fade_out = False
         
-        #sounds
+        # jump sound
         self.jump_sound = pygame.mixer.Sound("sounds/jump.wav")
         self.jump_sound.set_volume(0.5)
         
+        # score sound
         self.score_sound = pygame.mixer.Sound('sounds/scorering.wav')
         self.score_sound.set_volume(0.5)
         
+        # death sound
         self.death_sound = pygame.mixer.Sound('sounds/death.wav')
         self.death_sound.set_volume(0.5)
         
-
-        # right side
+        # right side images
         self.mario = pygame.transform.scale2x(pygame.image.load('graphics/mario.png').convert_alpha())
         self.mario_jump = pygame.transform.scale2x(pygame.image.load('graphics/mario_jump.png').convert_alpha())
         self.mario_walk_0 = pygame.transform.scale2x(pygame.image.load('graphics/mario_move0.png').convert_alpha())
@@ -44,7 +44,7 @@ class Player(pygame.sprite.Sprite):
         self.mario_death = pygame.transform.scale2x(pygame.image.load('graphics/mario_death.png').convert_alpha())
         self.mario_walk = [self.mario, self.mario_walk_0, self.mario_walk_1, self.mario_walk_2]
         
-        # left side
+        # left side images
         self.mario_walk_flip = []
         for i in range(len(self.mario_walk)):
             self.mario_walk_flip.append(pygame.transform.flip(self.mario_walk[i], True, False))
@@ -81,9 +81,9 @@ class Player(pygame.sprite.Sprite):
     def jump_animation(self):
         if self.rect.bottom < 610:
             self.jump = True
-            if self.moving and self.direction == 'right':
+            if self.direction == 'right':
                 self.image = self.mario_jump
-            elif self.moving and self.direction == 'left':
+            elif self.direction == 'left':
                 self.image = self.mario_jump_flip
         else: self.jump = False
          
@@ -115,11 +115,15 @@ class Player(pygame.sprite.Sprite):
         if collision_sprites:
             for sprite in collision_sprites:
                 global score
+                
+                # kill the enemy
                 if self.jump == True and self.rect.bottom > sprite.rect.top and not self.fade_out:
                     self.player_gravity = -20
                     sprite.fade_out = True
                     self.score_sound.play()
                     score += 1
+                    
+                # player dies
                 elif not self.fade_out:
                     self.fade_out = True
                     global bg_music
@@ -127,7 +131,6 @@ class Player(pygame.sprite.Sprite):
                     self.death_sound.play()
                     self.player_gravity = -20
                                       
-
     def update(self):
         self.player_input()
         self.jump_animation()
@@ -149,7 +152,8 @@ class Player(pygame.sprite.Sprite):
 
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, name, x, direction):
-        super().__init__()      
+        super().__init__()  
+            
         # variables
         self.direction = direction
         self.obstactle_index = 0
@@ -171,16 +175,17 @@ class Obstacle(pygame.sprite.Sprite):
         for i in range(len(self.frames)):
             self.frames_flip.append(pygame.transform.flip(self.frames[i], True, False))
         
-        # image/rect
+        # image
         if self.name == 'koopa' and self.direction == 'right':
             self.image = self.frames_flip[int(self.obstactle_index)]
         else:
             self.image = self.frames[self.obstactle_index]
-            
+         
+        # spawn enemies from the right and left
         if self.direction == 'left':
             self.rect = self.image.get_rect(midbottom = (x, 610))
         else:
-            self.rect = self.image.get_rect(midbottom = (-x+1000, 610))
+            self.rect = self.image.get_rect(midbottom = (-x + 1000, 610))
              
     def animation(self):
         self.obstactle_index += 0.1
@@ -190,6 +195,7 @@ class Obstacle(pygame.sprite.Sprite):
         else: self.image = self.frames[int(self.obstactle_index)]  
     
     def destroy(self):
+        # remove enemies if they are out of the screen
         if self.direction == 'left':
             if self.rect.x <= -100:
                 self.kill()  
@@ -206,6 +212,7 @@ class Obstacle(pygame.sprite.Sprite):
     
     def update(self):
         self.animation()
+        # move enemies to the screen either from the left or right
         if self.direction == 'left':
             self.rect.x -= 2
         else: self.rect.x += 2
@@ -233,14 +240,11 @@ font_1 = pygame.font.Font('fonts/emulogic.ttf', 70)
 game_active = False
 score = 0
 first_game = True
-# music
+
+# background music
 bg_music = pygame.mixer.Sound('sounds/overworld.wav')
 bg_music.set_volume(0.5)
 chanel= bg_music.play(loops = -1)
-
-game_over = pygame.mixer.Sound('sounds/gameover.wav')
-game_over.set_volume(0.5)
-
 
 # inactive game surface
 super_mario_bros_surf = pygame.image.load('graphics/super_mario_bros.png').convert_alpha()
@@ -257,7 +261,7 @@ ground_surf = pygame.image.load('graphics/ground.png').convert_alpha()
 # obstacle
 obstacle_group = pygame.sprite.Group()
 
-# timers
+# timer
 obstacle_timer = pygame.USEREVENT + 1
 pygame.time.set_timer(obstacle_timer, 900)
 
@@ -287,12 +291,12 @@ while True:
         # quit the game
         if event.type == pygame.QUIT:
             pygame.quit()
-            exit()   
+            exit()
+               
         if game_active:
             # add obstacles
             if event.type == obstacle_timer:
                 obstacle_group.add(choice([Goombas('left'), Koopa('left'), Goombas('left'), Goombas('right'), Koopa('right'), Goombas('right')]))
-
         else:
             # restart the game with ENTER
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN :
@@ -313,8 +317,7 @@ while True:
                 
             # start the game
             if event.key == pygame.K_RETURN:
-                game_active = True
-    
+                game_active = True   
                 
     if game_active:                      
         first_game = False
@@ -338,9 +341,9 @@ while True:
             screen.blit(super_mario_bros_surf, super_mario_bros_rect)
         else:
             screen.blit(game_over_surf, game_over_rect)
-        
+                
     if not first_game:
-        # text
+        # display score
         score_surf = font.render(f"Score: {score}", False, 'Black')
         score_rect = score_surf.get_rect(center = (640, 50))
         screen.blit(score_surf, score_rect)
