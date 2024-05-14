@@ -9,7 +9,7 @@
 - the point of the game is to survive as long as you can
 - you kill an enemy by jumping at it
 - you gain 1 point when killing goombas and 2 points when killing koopa
-- game is desctop-only
+- game is desktop-only
   
 ## Controls
 - **↑** Jump
