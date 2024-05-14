@@ -150,14 +150,9 @@ class Player(pygame.sprite.Sprite):
 
 
 class Obstacle(pygame.sprite.Sprite):
-    # dummy code
-    obstacle_count = 0
     
     def __init__(self, name, x, direction):
         super().__init__()  
-          
-        # dummy code
-        Obstacle.obstacle_count += 1
                     
         # variables
         self.direction = direction
@@ -225,23 +220,52 @@ class Obstacle(pygame.sprite.Sprite):
         self.fade_out_animation()
         if self.alpha < 255:
             self.image.set_alpha(self.alpha)
-                    
-    # dummy code  
-    @classmethod
-    def description(self):
-        return f"This is obstacle class with {Obstacle.obstacle_count} obstacles defined."
-    def __str__(self):
-        return f"Obstacle with the name {self.name} which is moving to the {self.direction}"
-   
-           
+                     
+             
 class Goombas(Obstacle):
     def __init__(self, direction):
         super().__init__('goombas', randint(1250, 1400), direction)
         
+        # dummy code - private property
+        self.__color = 'pink'
+        # dummy code - protected property
+        self._age = 23
+
+    # # dummy code - set and get private property
+    @property 
+    def color(self):
+        return self.__color
+    @color.setter
+    def color(self, color):
+        self.__color = color    
+    
+    # dummy code - set and get protected property
+    @property
+    def age(self):
+        return self._age
+    @age.setter
+    def age(self, age):
+        if not isinstance(age, int):
+            raise TypeError("age must be an integer")
+        self._age = age    
         
+               
 class Koopa(Obstacle):
+    # dummy code
+    koopa_count = 0
     def __init__(self, direction):
         super().__init__('koopa', randint(1400, 1650), direction)
+        
+        # dummy code - count objects
+        Koopa.koopa_count += 1
+        
+    # dummy code  - class method
+    @classmethod
+    def description(self):
+        return f"This is koopa class with {Koopa.koopa_count} obstacles defined."
+    # dummy code - string representation
+    def __str__(self):
+        return f"Koopa with which is moving to the {self.direction}"
 
 
 # variables
