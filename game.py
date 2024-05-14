@@ -191,6 +191,7 @@ clock = pygame.time.Clock()
 font = pygame.font.Font('fonts/emulogic.ttf', 30)
 game_active = False
 score = 0
+first_game = True
 
 # inactive game surface
 super_mario_bros_surf = pygame.image.load('graphics/super_mario_bros.png').convert_alpha()
@@ -263,6 +264,8 @@ while True:
     
                 
     if game_active:                
+        first_game = False
+        
         # background 
         screen.blit(sky_surf, (0, 0))
         screen.blit(ground_surf, (0, 610))
@@ -279,10 +282,11 @@ while True:
         screen.fill('#c84c0c')
         screen.blit(super_mario_bros_surf, super_mario_bros_rect)
         screen.blit(game_instruction_surf, game_instruction_rect)
-    # text
-    score_surf = font.render(f"Score: {score}", False, '#fcbcb0')
-    score_rect = score_surf.get_rect(center = (640, 50))
-    screen.blit(score_surf, score_rect)
+    if not first_game:
+        # text
+        score_surf = font.render(f"Score: {score}", False, '#fcbcb0')
+        score_rect = score_surf.get_rect(center = (640, 50))
+        screen.blit(score_surf, score_rect)
         
     pygame.display.update()
     clock.tick(60)   
