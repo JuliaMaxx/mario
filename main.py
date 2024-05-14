@@ -347,8 +347,7 @@ async def main():
             if event.type == pygame.KEYDOWN:
                 # quit the game on ESC
                 if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    exit()
+                    game_active = False
                     
                 # toggle fullscreen on F11
                 if event.key == pygame.K_F11:
