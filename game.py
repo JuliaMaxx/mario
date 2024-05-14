@@ -49,14 +49,14 @@ class Player(pygame.sprite.Sprite):
             self.player_gravity = -25 
         
         # left walking
-        if keys[pygame.K_LEFT] and self.rect.left >= 0 :
+        if keys[pygame.K_LEFT] and self.rect.left >= 0 and not self.fade_out:
             self.rect.x -= 5
             self.direction = 'left'
             self.walk_animation(self.direction)
             self.moving = True
         
         # right walking
-        elif keys[pygame.K_RIGHT] and self.rect.right <= 1280:
+        elif keys[pygame.K_RIGHT] and self.rect.right <= 1280 and not self.fade_out:
             self.rect.x += 5
             self.direction = 'right'
             self.walk_animation(self.direction)
@@ -101,13 +101,14 @@ class Player(pygame.sprite.Sprite):
         if collision_sprites:
             for sprite in collision_sprites:
                 global score
-                if self.jump == True and self.rect.bottom > sprite.rect.top:
-                    sprite.fade_out = True
+                if self.jump == True and self.rect.bottom > sprite.rect.top and not self.fade_out:
                     self.player_gravity = -20
+                    sprite.fade_out = True
                     score += 1
-                else:
+                elif not self.fade_out:
                     self.fade_out = True
-                    
+                    self.player_gravity = -20
+                                      
 
     def update(self):
         self.player_input()
