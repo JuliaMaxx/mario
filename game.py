@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
           
         # image/rect   
         self.image = self.mario_walk[int(self.player_index)]
-        self.rect = self.image.get_rect(midbottom = (30, 610))
+        self.rect = self.image.get_rect(midbottom = (640, 610))
     
     def player_input(self):
         keys = pygame.key.get_pressed()
@@ -244,7 +244,7 @@ def toggle_fullscreen():
 def game_reset():
     global score
     obstacle_group.empty()
-    player.sprite.rect.x = 30
+    player.sprite.rect.x = 640
     player.sprite.alpha = 255
     player.sprite.fade_out = False
     player.sprite.image = player.sprite.mario_walk[0]
