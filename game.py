@@ -129,10 +129,10 @@ class Player(pygame.sprite.Sprite):
 
 
 class Obstacle(pygame.sprite.Sprite):
-    def __init__(self, name, x):
-        super().__init__()
-        
+    def __init__(self, name, x, direction):
+        super().__init__()      
         # variables
+        self.direction = direction
         self.obstactle_index = 0
         
         # fade out variables
@@ -141,23 +141,30 @@ class Obstacle(pygame.sprite.Sprite):
         self.fade_out = False
         
         # images
-        frame_0 = pygame.image.load(f'graphics/{name}_0.png').convert_alpha()
-        frame_1 = pygame.image.load(f'graphics/{name}_1.png').convert_alpha()
+        self.frame_0 = pygame.image.load(f'graphics/{name}_0.png').convert_alpha()
+        self.frame_1 = pygame.image.load(f'graphics/{name}_1.png').convert_alpha()
         self.dead = pygame.image.load(f'graphics/{name}_dead.png').convert_alpha()
-        self.frames = [frame_0, frame_1]
+        self.frames = [self.frame_0, self.frame_1]
         
         # image/rect
         self.image = self.frames[self.obstactle_index]
-        self.rect = self.image.get_rect(midbottom = (x, 610))
-    
+        if self.direction == 'left':
+            self.rect = self.image.get_rect(midbottom = (x, 610))
+        else:
+            self.rect = self.image.get_rect(midbottom = (-x+1000, 610))
+             
     def animation(self):
         self.obstactle_index += 0.1
         if self.obstactle_index > len(self.frames): self.obstactle_index = 0
         self.image = self.frames[int(self.obstactle_index)]  
     
     def destroy(self):
-        if self.rect.x <= -100:
-            self.kill()      
+        if self.direction == 'left':
+            if self.rect.x <= -100:
+                self.kill()  
+        else:
+            if self.rect.x >= 1300:
+                self.kill()   
     
     def fade_out_animation(self):
         if self.fade_out:
@@ -168,7 +175,9 @@ class Obstacle(pygame.sprite.Sprite):
     
     def update(self):
         self.animation()
-        self.rect.x -= 2
+        if self.direction == 'left':
+            self.rect.x -= 2
+        else: self.rect.x += 2
         self.destroy()
         self.fade_out_animation()
         if self.alpha < 255:
@@ -176,13 +185,13 @@ class Obstacle(pygame.sprite.Sprite):
    
            
 class Goombas(Obstacle):
-    def __init__(self):
-        super().__init__('goombas', randint(1250, 1400))
+    def __init__(self, direction):
+        super().__init__('goombas', randint(1250, 1400), direction)
         
         
 class Koopa(Obstacle):
-    def __init__(self):
-        super().__init__('koopa', randint(1400, 1650))
+    def __init__(self, direction):
+        super().__init__('koopa', randint(1400, 1650), direction)
 
 
 # variables
@@ -208,7 +217,7 @@ obstacle_group = pygame.sprite.Group()
 
 # timers
 obstacle_timer = pygame.USEREVENT + 1
-pygame.time.set_timer(obstacle_timer, 2000)
+pygame.time.set_timer(obstacle_timer, 900)
 
 # player
 player = pygame.sprite.GroupSingle()
@@ -238,7 +247,7 @@ while True:
         if game_active:
             # add obstacles
             if event.type == obstacle_timer:
-                obstacle_group.add(choice([Goombas(), Koopa(), Goombas()]))
+                obstacle_group.add(choice([Goombas('left'), Koopa('left'), Goombas('left'), Goombas('right'), Koopa('right'), Goombas('right')]))
 
         else:
             # restart the game with ENTER
