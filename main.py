@@ -1,6 +1,7 @@
 import pygame
 from sys import exit
 from random import randint, choice
+import asyncio
 
 # initialization
 pygame.init()
@@ -322,67 +323,71 @@ def game_reset():
     if not chanel.get_busy():
         chanel = bg_music.play()    
 
-while True:
-    for event in pygame.event.get():
-        # quit the game
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-               
-        if game_active:
-            # add obstacles
-            if event.type == obstacle_timer:
-                obstacle_group.add(choice([Goombas('left'), Koopa('left'), Goombas('left'), Goombas('right'), Koopa('right'), Goombas('right')]))
-        else:
-            # restart the game with ENTER
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN :
-                game_active = True
-                start_time = pygame.time.get_ticks()
-                game_reset()
-                                    
-        # keydow
-        if event.type == pygame.KEYDOWN:
-            # quit the game on ESC
-            if event.key == pygame.K_ESCAPE:
+async def main():
+    global game_active, first_game
+    while True:
+        for event in pygame.event.get():
+            # quit the game
+            if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
                 
-            # toggle fullscreen on F11
-            if event.key == pygame.K_F11:
-                pygame.display.toggle_fullscreen()
-                
-            # start the game
-            if event.key == pygame.K_RETURN:
-                game_active = True   
-                
-    if game_active:                 
-        # background 
-        screen.blit(sky_surf, (0, 0))
-        screen.blit(ground_surf, (0, 610))
+            if game_active:
+                # add obstacles
+                if event.type == obstacle_timer:
+                    obstacle_group.add(choice([Goombas('left'), Koopa('left'), Goombas('left'), Goombas('right'), Koopa('right'), Goombas('right')]))
+            else:
+                # restart the game with ENTER
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN :
+                    game_active = True
+                    start_time = pygame.time.get_ticks()
+                    game_reset()
+                                        
+            # keydow
+            if event.type == pygame.KEYDOWN:
+                # quit the game on ESC
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    exit()
+                    
+                # toggle fullscreen on F11
+                if event.key == pygame.K_F11:
+                    pygame.display.toggle_fullscreen()
+                    
+                # start the game
+                if event.key == pygame.K_RETURN:
+                    game_active = True   
+                    
+        if game_active:                 
+            # background 
+            screen.blit(sky_surf, (0, 0))
+            screen.blit(ground_surf, (0, 610))
+            
+            # player
+            player.draw(screen)
+            player.update()
+            
+            # obstacles
+            obstacle_group.draw(screen)
+            obstacle_group.update()
         
-        # player
-        player.draw(screen)
-        player.update()
-        
-        # obstacles
-        obstacle_group.draw(screen)
-        obstacle_group.update()
-    
-        first_game = False
-    else:
-        screen.fill('#c84c0c')
-        screen.blit(game_instruction_surf, game_instruction_rect)
-        if first_game:
-            screen.blit(super_mario_bros_surf, super_mario_bros_rect)
+            first_game = False
         else:
-            screen.blit(game_over_surf, game_over_rect)
-                
-    if not first_game:
-        # display score
-        score_surf = font.render(f"Score: {score}", False, 'Black')
-        score_rect = score_surf.get_rect(center = (640, 50))
-        screen.blit(score_surf, score_rect)
-        
-    pygame.display.update()
-    clock.tick(60)   
-    
+            screen.fill('#c84c0c')
+            screen.blit(game_instruction_surf, game_instruction_rect)
+            if first_game:
+                screen.blit(super_mario_bros_surf, super_mario_bros_rect)
+            else:
+                screen.blit(game_over_surf, game_over_rect)
+                    
+        if not first_game:
+            # display score
+            score_surf = font.render(f"Score: {score}", False, 'Black')
+            score_rect = score_surf.get_rect(center = (640, 50))
+            screen.blit(score_surf, score_rect)
+            
+        pygame.display.update()
+        clock.tick(60)   
+        await asyncio.sleep(0)
+
+asyncio.run(main())
