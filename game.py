@@ -6,6 +6,8 @@ from random import randint, choice
 pygame.init()
 pygame.display.set_caption("Mario")
 
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -21,6 +23,17 @@ class Player(pygame.sprite.Sprite):
         self.alpha = 255  
         self.fade_speed = 3
         self.fade_out = False
+        
+        #sounds
+        self.jump_sound = pygame.mixer.Sound("sounds/jump.wav")
+        self.jump_sound.set_volume(0.5)
+        
+        self.score_sound = pygame.mixer.Sound('sounds/scorering.wav')
+        self.score_sound.set_volume(0.5)
+        
+        self.death_sound = pygame.mixer.Sound('sounds/death.wav')
+        self.death_sound.set_volume(0.5)
+        
 
         # right side
         self.mario = pygame.transform.scale2x(pygame.image.load('graphics/mario.png').convert_alpha())
@@ -46,7 +59,8 @@ class Player(pygame.sprite.Sprite):
         
         # jump
         if keys[pygame.K_UP] and self.rect.bottom >= 610:
-            self.player_gravity = -25 
+            self.player_gravity = -25
+            self.jump_sound.play() 
         
         # left walking
         if keys[pygame.K_LEFT] and self.rect.left >= 0 and not self.fade_out:
@@ -104,9 +118,13 @@ class Player(pygame.sprite.Sprite):
                 if self.jump == True and self.rect.bottom > sprite.rect.top and not self.fade_out:
                     self.player_gravity = -20
                     sprite.fade_out = True
+                    self.score_sound.play()
                     score += 1
                 elif not self.fade_out:
                     self.fade_out = True
+                    global bg_music
+                    bg_music.stop()
+                    self.death_sound.play()
                     self.player_gravity = -20
                                       
 
@@ -215,6 +233,14 @@ font_1 = pygame.font.Font('fonts/emulogic.ttf', 70)
 game_active = False
 score = 0
 first_game = True
+# music
+bg_music = pygame.mixer.Sound('sounds/overworld.wav')
+bg_music.set_volume(0.5)
+chanel= bg_music.play(loops = -1)
+
+game_over = pygame.mixer.Sound('sounds/gameover.wav')
+game_over.set_volume(0.5)
+
 
 # inactive game surface
 super_mario_bros_surf = pygame.image.load('graphics/super_mario_bros.png').convert_alpha()
@@ -246,13 +272,15 @@ def toggle_fullscreen():
     
 # game reset function
 def game_reset():
-    global score
+    global score, chanel
     obstacle_group.empty()
     player.sprite.rect.x = 640
     player.sprite.alpha = 255
     player.sprite.fade_out = False
     player.sprite.image = player.sprite.mario_walk[0]
     score = 0
+    if not chanel.get_busy():
+        chanel = bg_music.play()    
 
 while True:
     for event in pygame.event.get():
@@ -288,7 +316,7 @@ while True:
                 game_active = True
     
                 
-    if game_active:                
+    if game_active:                      
         first_game = False
         
         # background 
